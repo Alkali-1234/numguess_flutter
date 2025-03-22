@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:numguess_client/numguess_client.dart';
+import 'package:numguess_flutter/components/account_dialog.dart';
 import 'package:numguess_flutter/logger.dart';
 import 'package:numguess_flutter/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -44,43 +45,45 @@ class HomePageState extends ConsumerState<HomePage> {
                         child: child,
                       );
                     },
-                    child: Text.rich(TextSpan(children: [
-                      if (currentResponse == null) ...[
-                        TextSpan(
-                            text: "Choose a number from ",
-                            style: textTheme.displayLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 48,
-                            )),
-                        TextSpan(
-                            text: "1-100",
-                            style: textTheme.displayLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 48,
-                                color: theme.tertiary))
-                      ],
-                      if (currentResponse == GuessResponses.higher)
-                        TextSpan(
-                            text: "Go higher!",
-                            style: textTheme.displayLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 48,
-                            )),
-                      if (currentResponse == GuessResponses.lower)
-                        TextSpan(
-                            text: "Go lower!",
-                            style: textTheme.displayLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 48,
-                            )),
-                      if (currentResponse == GuessResponses.correct)
-                        TextSpan(
-                            text: "Correct!",
-                            style: textTheme.displayLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 48,
-                                color: theme.tertiary))
-                    ])),
+                    child: Text.rich(
+                        key: ValueKey(currentResponse),
+                        TextSpan(children: [
+                          if (currentResponse == null) ...[
+                            TextSpan(
+                                text: "Choose a number from ",
+                                style: textTheme.displayLarge!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 48,
+                                )),
+                            TextSpan(
+                                text: "1-100",
+                                style: textTheme.displayLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 48,
+                                    color: theme.tertiary))
+                          ],
+                          if (currentResponse == GuessResponses.higher)
+                            TextSpan(
+                                text: "Go higher!",
+                                style: textTheme.displayLarge!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 48,
+                                )),
+                          if (currentResponse == GuessResponses.lower)
+                            TextSpan(
+                                text: "Go lower!",
+                                style: textTheme.displayLarge!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 48,
+                                )),
+                          if (currentResponse == GuessResponses.correct)
+                            TextSpan(
+                                text: "Correct!",
+                                style: textTheme.displayLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 48,
+                                    color: theme.tertiary))
+                        ])),
                   ),
                   const SizedBox(
                     height: 16,
@@ -138,7 +141,6 @@ class HomePageState extends ConsumerState<HomePage> {
                           setState(() {
                             inStream.add(number);
                           });
-                          // logger.i(await client.example.hello("amongus"));
                         },
                         child: Center(
                           child: Text(
@@ -154,28 +156,46 @@ class HomePageState extends ConsumerState<HomePage> {
                 ],
               ),
             ),
-            if (currentUserProvider == null)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 32),
-                  child: TextButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      enableFeedback: false,
-                    ),
-                    child: Text.rich(TextSpan(children: [
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 32),
+                child: TextButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AccountDialog());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    enableFeedback: false,
+                  ),
+                  child: Builder(builder: (context) {
+                    if (currentUserProvider == null) {
+                      return Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: "Login ",
+                            style: textTheme.bodyMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.tertiary)),
+                        TextSpan(
+                            text: "to save games", style: textTheme.bodyMedium)
+                      ]));
+                    }
+                    return Text.rich(TextSpan(children: [
                       TextSpan(
-                          text: "Login ",
+                          text: "Logged in as ",
+                          style: textTheme.bodyMedium!
+                              .copyWith(fontWeight: FontWeight.bold)),
+                      TextSpan(
+                          text: currentUserProvider.userInfo?.userName,
                           style: textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.tertiary)),
-                      TextSpan(
-                          text: "to save games", style: textTheme.bodyMedium)
-                    ])),
-                  ),
+                              color: theme.tertiary))
+                    ]));
+                  }),
                 ),
-              )
+              ),
+            )
           ],
         ),
       ),
