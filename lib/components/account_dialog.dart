@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:numguess_flutter/components/elevated_button_decoration.dart';
 import 'package:numguess_flutter/components/input_decoration.dart';
 import 'package:numguess_flutter/logger.dart';
@@ -39,6 +40,16 @@ class _AccountDialogState extends ConsumerState<AccountDialog> {
 
   bool loading = false;
   String error = "";
+
+  //* Fetch user data
+  @override
+  void initState() {
+    super.initState();
+    final currentUser = ref.read(currentUserNotifierProvider);
+    if (currentUser != null) {
+      fetchUserData(ref);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,10 +111,44 @@ class _AccountDialogState extends ConsumerState<AccountDialog> {
                         style: ElevatedButtonDecoration
                             .primaryElevatedButtonDecoration(theme, textTheme),
                         onPressed: () {
-                          //TODO: Implement view games
+                          context.go("/games");
                         },
                         child: Text(
                           "View Games",
+                          style: textTheme.bodyMedium!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.onPrimary),
+                        )),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.error,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        onPressed: () async {
+                          final result = await sessionManager.signOutDevice();
+                          if (result == true) {
+                            ref
+                                .read(currentUserNotifierProvider.notifier)
+                                .setUser(null);
+                          } else {
+                            if (!context.mounted) return;
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return SignOutUnableDialog(
+                                      textTheme: textTheme, theme: theme);
+                                });
+                          }
+                        },
+                        child: Text(
+                          "Logout",
                           style: textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.bold,
                               color: theme.onPrimary),
@@ -198,7 +243,7 @@ class _AccountDialogState extends ConsumerState<AccountDialog> {
                   Text(
                     "Login",
                     style: textTheme.headlineMedium!.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.primary),
+                        fontWeight: FontWeight.bold, color: theme.tertiary),
                   ),
                   const SizedBox(
                     height: 16,
@@ -425,7 +470,41 @@ class _AccountDialogState extends ConsumerState<AccountDialog> {
         ),
       ),
     );
-    //TODO: Implement current account view
+  }
+}
+
+class SignOutUnableDialog extends StatelessWidget {
+  const SignOutUnableDialog({
+    super.key,
+    required this.textTheme,
+    required this.theme,
+  });
+
+  final TextTheme textTheme;
+  final ColorScheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        "Unable to sign out!",
+        style: textTheme.bodyMedium,
+      ),
+      icon: Icon(
+        Icons.warning_rounded,
+        color: theme.primary,
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              "Close",
+              style: textTheme.bodySmall,
+            ))
+      ],
+    );
   }
 }
 
@@ -468,7 +547,13 @@ Future<User?> loginWithEmail(
   return userData;
 }
 
-Future<User?> getUserData(UserInfo userInfo) async {
+Future<User?> getUserData(UserInfo? userInfo) async {
   final request = await client.getUserData.getUserData(userInfo);
   return request;
+}
+
+Future<void> fetchUserData(WidgetRef ref) async {
+  final request = await getUserData(null);
+  if (request == null) return;
+  ref.read(currentUserNotifierProvider.notifier).setUser(request);
 }
