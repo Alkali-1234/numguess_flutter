@@ -1,0 +1,8 @@
+# flutter pub run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/logores.png"
+  web:
+    generate: true
+    image_path: "assets/logores.png"
+    background_color: "#1A2F4B"
+    theme_color: "#1A2F4B"

@@ -45,45 +45,49 @@ class HomePageState extends ConsumerState<HomePage> {
                         child: child,
                       );
                     },
-                    child: Text.rich(
-                        key: ValueKey(currentResponse),
-                        TextSpan(children: [
-                          if (currentResponse == null) ...[
-                            TextSpan(
-                                text: "Choose a number from ",
-                                style: textTheme.displayLarge!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 48,
-                                )),
-                            TextSpan(
-                                text: "1-100",
-                                style: textTheme.displayLarge!.copyWith(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Text.rich(
+                          textAlign: TextAlign.center,
+                          key: ValueKey(currentResponse),
+                          TextSpan(children: [
+                            if (currentResponse == null) ...[
+                              TextSpan(
+                                  text: "Choose a number from ",
+                                  style: textTheme.displayLarge!.copyWith(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 48,
-                                    color: theme.tertiary))
-                          ],
-                          if (currentResponse == GuessResponses.higher)
-                            TextSpan(
-                                text: "Go higher!",
-                                style: textTheme.displayLarge!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 48,
-                                )),
-                          if (currentResponse == GuessResponses.lower)
-                            TextSpan(
-                                text: "Go lower!",
-                                style: textTheme.displayLarge!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 48,
-                                )),
-                          if (currentResponse == GuessResponses.correct)
-                            TextSpan(
-                                text: "Correct!",
-                                style: textTheme.displayLarge!.copyWith(
+                                  )),
+                              TextSpan(
+                                  text: "1-100",
+                                  style: textTheme.displayLarge!.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 48,
+                                      color: theme.tertiary))
+                            ],
+                            if (currentResponse == GuessResponses.higher)
+                              TextSpan(
+                                  text: "Go higher!",
+                                  style: textTheme.displayLarge!.copyWith(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 48,
-                                    color: theme.tertiary))
-                        ])),
+                                  )),
+                            if (currentResponse == GuessResponses.lower)
+                              TextSpan(
+                                  text: "Go lower!",
+                                  style: textTheme.displayLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 48,
+                                  )),
+                            if (currentResponse == GuessResponses.correct)
+                              TextSpan(
+                                  text: "Correct!",
+                                  style: textTheme.displayLarge!.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 48,
+                                      color: theme.tertiary))
+                          ])),
+                    ),
                   ),
                   const SizedBox(
                     height: 16,

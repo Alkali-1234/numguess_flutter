@@ -249,6 +249,8 @@ class _AccountDialogState extends ConsumerState<AccountDialog> {
                     height: 16,
                   ),
                   TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    autofillHints: [AutofillHints.email],
                     controller: loginEmailController,
                     style: textTheme.bodyMedium,
                     decoration: StandardInputDecoration.inputDecoration(
@@ -258,6 +260,7 @@ class _AccountDialogState extends ConsumerState<AccountDialog> {
                     height: 8,
                   ),
                   TextField(
+                    autofillHints: [AutofillHints.password],
                     controller: loginPasswordController,
                     obscureText: true,
                     style: textTheme.bodyMedium,

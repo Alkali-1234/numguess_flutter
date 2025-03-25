@@ -66,7 +66,8 @@ class _GamesPageState extends ConsumerState<GamesPage> {
                     spacing: 16,
                     runSpacing: 16,
                     children: [
-                      for (var game in games) GameListItemCard(game: game)
+                      for (var game in games.reversed)
+                        GameListItemCard(game: game)
                     ],
                   ),
                 ),
