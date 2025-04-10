@@ -6,7 +6,7 @@ part of 'home_page.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$guessResultHash() => r'02a94d02d17203dc62710d6e82243f8d70370f01';
+String _$guessResultHash() => r'a2edffb2fadd072af118ccedf6abc27905cc3ef6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -157,5 +157,25 @@ class _GuessResultProviderElement
   @override
   Stream<int> get guesses => (origin as GuessResultProvider).guesses;
 }
+
+String _$loadingGuessResultHash() =>
+    r'b5f74ed1452661e65e3637f90cd45fa17fe774b0';
+
+/// See also [loadingGuessResult].
+@ProviderFor(loadingGuessResult)
+final loadingGuessResultProvider =
+    AutoDisposeProvider<ValueNotifier<bool>>.internal(
+  loadingGuessResult,
+  name: r'loadingGuessResultProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$loadingGuessResultHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LoadingGuessResultRef = AutoDisposeProviderRef<ValueNotifier<bool>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -26,6 +26,7 @@ class HomePageState extends ConsumerState<HomePage> {
     //* Provider
     var currentUserProvider = ref.watch(currentUserNotifierProvider);
     var currentResponse = ref.watch(guessResultProvider(inStream.stream)).value;
+    var loadingGuessResult = ref.watch(loadingGuessResultProvider);
 
     var theme = Theme.of(context).colorScheme;
     var textTheme = Theme.of(context).textTheme;
@@ -139,6 +140,7 @@ class HomePageState extends ConsumerState<HomePage> {
                             setState(() {});
                             return;
                           }
+                          loadingGuessResult.value = true;
                           final number =
                               int.tryParse(guessInputController.text);
                           if (number == null) return;
@@ -148,9 +150,11 @@ class HomePageState extends ConsumerState<HomePage> {
                         },
                         child: Center(
                           child: Text(
-                            currentResponse == GuessResponses.correct
-                                ? "Try again!"
-                                : "Guess!",
+                            loadingGuessResult.value
+                                ? "Loading..."
+                                : currentResponse == GuessResponses.correct
+                                    ? "Try again!"
+                                    : "Guess!",
                             style: textTheme.bodyLarge!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),
@@ -227,10 +231,22 @@ class CurrentUserNotifier extends Notifier<User?> {
 Stream<GuessResponses?> guessResult(Ref ref, Stream<int> guesses) async* {
   logger.i("Guess result stream started");
   await for (GuessResponses? result in client.guess.guessStream(guesses)) {
+    ref.read(loadingGuessResultProvider).value = false;
     yield result;
     if (result == GuessResponses.correct) {
       logger.i("Guess result stream finished");
       return;
     }
   }
+}
+
+@riverpod
+ValueNotifier<bool> loadingGuessResult(Ref ref) {
+  final notifier = ValueNotifier(false);
+
+  ref.onDispose(notifier.dispose);
+
+  notifier.addListener(ref.notifyListeners);
+
+  return notifier;
 }
